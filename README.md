@@ -61,7 +61,7 @@ Else, it rejects the input as noise.
 ## The Operator (Administration)
 Access the neural control panel at `/admin`.
 -   **Username**: `admin`
--   **Password**: `admin` (Change this immediately in production)
+-   **Password**: `admin`
 
 Here you can inject new data vectors (CSV) or manually adjust specific dimensions (questions). The bot recalculates its vector space upon every save.
 
