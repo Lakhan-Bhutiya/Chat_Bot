@@ -1,0 +1,7 @@
+django
+django-jazzmin
+django-import-export
+pandas
+numpy
+nltk
+scikit-learn

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00f3ff;
+            --secondary-color: #bc13fe;
+            --bg-color: #050510;
+            --chat-bg: #0a0a20;
+            --user-msg-bg: #1a1a40;
+            --bot-msg-bg: #0f0f2d;
+            --text-color: #e0e0ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background: var(--chat-bg);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), 0 0 40px rgba(188, 19, 254, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .header {
+            padding: 20px;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.1), rgba(188, 19, 254, 0.1));
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--user-msg-bg);
+            border: 1px solid rgba(188, 19, 254, 0.5);
+            color: #fff;
+            border-bottom-right-radius: 2px;
+            box-shadow: 0 0 10px rgba(188, 19, 254, 0.2);
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: var(--bot-msg-bg);
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            color: var(--primary-color);
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        button {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+        }
+
+        /* Scrollbar */
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-box::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        .chat-box::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .typing {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            margin-left: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        NEURO-CHAT v1.0
+    </div>
+    <div class="chat-box" id="chat-box">
+        <div class="message bot-message">
+            Hello! I am your AI assistant. How can I help you today?
+        </div>
+    </div>
+    <div class="typing" id="typing-indicator">AI is typing...</div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+        <button onclick="sendMessage()">SEND</button>
+    </div>
+</div>
+
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    userInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    function appendMessage(text, sender) {
+        const div = document.createElement('div');
+        div.classList.add('message');
+        div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+        
+        // Convert newlines to <br> for bot messages
+        if (sender === 'bot') {
+            div.innerHTML = text.replace(/\n/g, '<br>');
+        } else {
+            div.textContent = text;
+        }
+        
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user');
+        userInput.value = '';
+        typingIndicator.style.display = 'block';
+
+        try {
+            const response = await fetch('/api/chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text })
+            });
+            
+            const data = await response.json();
+            typingIndicator.style.display = 'none';
+            
+            if (data.response) {
+                appendMessage(data.response, 'bot');
+            } else {
+                appendMessage("Error: Could not get response.", 'bot');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            typingIndicator.style.display = 'none';
+            appendMessage("Error: Network issue.", 'bot');
+        }
+    }
+</script>
+
+</body>
+</html>
