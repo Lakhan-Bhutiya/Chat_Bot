@@ -60,6 +60,7 @@ Else, it rejects the input as noise.
 
 ## The Operator (Administration)
 Access the neural control panel at `/admin`.
+You can set that by yourself but just in case.
 -   **Username**: `admin`
 -   **Password**: `admin`
 
