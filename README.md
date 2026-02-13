@@ -66,5 +66,16 @@ You can set that by yourself but just in case.
 
 Here you can inject new data vectors (CSV) or manually adjust specific dimensions (questions). The bot recalculates its vector space upon every save.
 
+## The Visual Interface
+Experience the vector space directly through the neural interface.
+
+### Main Neural Link (Chat Interface)
+![Chat Interface](screenshots/chat_interface.png)
+*The primary communication channel with the vector intelligence.*
+
+### Admin Matrix (Data Upload)
+![Admin Upload](screenshots/upload_interface.png)
+*The control panel for injecting new data vectors.*
+
 ---
 

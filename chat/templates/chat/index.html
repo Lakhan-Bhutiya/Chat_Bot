@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-color: #00f3ff;
@@ -76,8 +79,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .user-message {
@@ -145,9 +155,11 @@
         .chat-box::-webkit-scrollbar {
             width: 8px;
         }
+
         .chat-box::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.1);
         }
+
         .chat-box::-webkit-scrollbar-thumb {
             background: rgba(0, 243, 255, 0.3);
             border-radius: 4px;
@@ -162,84 +174,86 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="header">
-        NEURO-CHAT v1.0
-    </div>
-    <div class="chat-box" id="chat-box">
-        <div class="message bot-message">
-            Hello! I am your AI assistant. How can I help you today?
+    <div class="container">
+        <div class="header">
+            NEURO-CHAT v1.0
+        </div>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">
+                Hello! I am your AI assistant. How can I help you today?
+            </div>
+        </div>
+        <div class="typing" id="typing-indicator">AI is typing...</div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            <button onclick="sendMessage()">SEND</button>
         </div>
     </div>
-    <div class="typing" id="typing-indicator">AI is typing...</div>
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
-        <button onclick="sendMessage()">SEND</button>
-    </div>
-</div>
 
-<script>
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
-    const typingIndicator = document.getElementById('typing-indicator');
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const typingIndicator = document.getElementById('typing-indicator');
 
-    userInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
 
-    function appendMessage(text, sender) {
-        const div = document.createElement('div');
-        div.classList.add('message');
-        div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        
-        // Convert newlines to <br> for bot messages
-        if (sender === 'bot') {
-            div.innerHTML = text.replace(/\n/g, '<br>');
-        } else {
-            div.textContent = text;
-        }
-        
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
 
-    async function sendMessage() {
-        const text = userInput.value.trim();
-        if (!text) return;
-
-        appendMessage(text, 'user');
-        userInput.value = '';
-        typingIndicator.style.display = 'block';
-
-        try {
-            const response = await fetch('/api/chat/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: text })
-            });
-            
-            const data = await response.json();
-            typingIndicator.style.display = 'none';
-            
-            if (data.response) {
-                appendMessage(data.response, 'bot');
+            // Convert newlines to <br> for bot messages
+            if (sender === 'bot') {
+                div.innerHTML = text.replace(/\n/g, '<br>');
             } else {
-                appendMessage("Error: Could not get response.", 'bot');
+                div.textContent = text;
             }
 
-        } catch (error) {
-            console.error('Error:', error);
-            typingIndicator.style.display = 'none';
-            appendMessage("Error: Network issue.", 'bot');
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
-    }
-</script>
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            userInput.value = '';
+            typingIndicator.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                typingIndicator.style.display = 'none';
+
+                if (data.response) {
+                    appendMessage(data.response, 'bot');
+                } else {
+                    appendMessage("Error: Could not get response.", 'bot');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.style.display = 'none';
+                appendMessage("Error: Network issue.", 'bot');
+            }
+        }
+    </script>
 
 </body>
+
 </html>
