@@ -182,9 +182,6 @@
             NEURO-CHAT v1.0
         </div>
         <div class="chat-box" id="chat-box">
-            <div class="message bot-message">
-                Hello! I am your AI assistant. How can I help you today?
-            </div>
         </div>
         <div class="typing" id="typing-indicator">AI is typing...</div>
         <div class="input-area">
@@ -209,16 +206,31 @@
             div.classList.add('message');
             div.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
 
+            const contentSpan = document.createElement('span');
             // Convert newlines to <br> for bot messages
             if (sender === 'bot') {
-                div.innerHTML = text.replace(/\n/g, '<br>');
+                contentSpan.innerHTML = text.replace(/\n/g, '<br>');
             } else {
-                div.textContent = text;
+                contentSpan.textContent = text;
             }
+            div.appendChild(contentSpan);
 
+            const timeSpan = document.createElement('div');
+            timeSpan.style.fontSize = '0.7rem';
+            timeSpan.style.marginTop = '5px';
+            timeSpan.style.textAlign = sender === 'user' ? 'left' : 'right';
+            timeSpan.style.opacity = '0.6';
+            timeSpan.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true });
+
+            div.appendChild(timeSpan);
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+
+        // Initial Greeting
+        window.addEventListener('load', () => {
+            appendMessage("Hello! I am your AI assistant. How can I help you today?", 'bot');
+        });
 
         async function sendMessage() {
             const text = userInput.value.trim();
